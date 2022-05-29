@@ -19,7 +19,7 @@ Deploy the application via the use of docker. Please use the below docker compos
 
 ```
   realdebridmanager:
-    image: hyperbunny77/realdebridmanager:2022.05.22   #Change to your chosen release
+    image: hyperbunny77/realdebridmanager:2022.05.22   #Change to the latest release
     container_name: realdebridmanager
     environment:
       - PUID=0
@@ -42,6 +42,10 @@ as a source for downloading new files. This allows you to benefit from the many
 advantages that the Real Debrid service provides.
 
 #### Setup :
+
+Simply add the "Torrent Blackhole" option as a download client and fill out the following:
+
+![alt text]https://i.ibb.co/PCdQ53Y/Sonnar-Settings.png
 
 
 
