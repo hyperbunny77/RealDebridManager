@@ -10,8 +10,9 @@ It is intended to slot into your existing workflows. Please see examples below.
 * Detect torrent file in watched folder.
 * Submit to Real Debrid for action.
 * Watch/manage Real Debrid until file is ready for download.
-* Get Real Debrid link to files in torrent.
+* Get Real Debrid link to file in torrent.
 * Send to local download client (Aria2).
+* Move Torrent file to completed/errored Folders
 
 ## Core Setup :
 
@@ -42,14 +43,14 @@ The use of Real Debrid Manager will mean sonarr/radarr can utilise Real Debrid
 as a source for downloading new files. This allows you to benefit from the many
 advantages that the Real Debrid service provides.
 
-#### Setup :
+### Setup :
 
 Simply add the "Torrent Blackhole" option as a download client and fill out the following:
 
 
 ![Settings](https://i.ibb.co/PZ4tStj/Sonnar-Settings.png)
 
-* Name -  **"Real Debird Manager"**
+* Name -  **"Real Debrid Manager"**
 * Enable - **Yes**
 * Torrent Folder - **This should be the watch folder**
 * Watch Folder - **This is where ARIA2 saves downloaded files**
@@ -60,23 +61,27 @@ Simply add the "Torrent Blackhole" option as a download client and fill out the 
 Sonarr/Radarr will now save torrent information in the specified folder which Real Debrid Manager
 will then pick up and action. 
 
-## How to Use :
 
-### Understanding the Web UI :
+## Application Guide 
 
-Once the application is setup you will be taken to the main page.
+
+Once the application is set up you will be taken to the main page.
 
 This is where you can see the progress of all tasks sent to the application.
 
-There are several UI Elements to be aware of :
+There are several UI elements to be aware of :
 
 ![WebUI](https://i.ibb.co/Gx7C8YK/webui.png)
 
 
-* Delete Completed - Removes all downloads from list which have been sent to Aria2.
-* Delete All - Removes all downloads from list. 
-* Info - Shows each stage that the application has processed for a particular task
-* Delete - Deletes the particular task. 
+* Delete Completed - **Removes all downloads from list which have been sent to Aria2.**
+* Delete All - **Removes all downloads from list.** 
+* Info - **Shows each stage that the application has processed for a particular task**
+* Delete - **Deletes the particular task.** 
 
+### End Notes
 
+The application use itself should be fairly self-explanatory!
+
+Feel free to open an issue or comment if you have a feature request or can optmize my code :-)
 
