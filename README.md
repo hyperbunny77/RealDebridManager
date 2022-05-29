@@ -39,7 +39,7 @@ Deploy the application via the use of docker. Please use the below docker compos
 ## Sonarr/Radarr Integration :
 
 This application fits great into your workflow with Sonarr/Radarr.
-The use of Real Debrid Manager will mean sonarr/radarr can utilise Real Debrid
+The use of Real Debrid Manager will mean sonarr/radarr can utilize Real Debrid
 as a source for downloading new files. This allows you to benefit from the many
 advantages that the Real Debrid service provides.
 
@@ -83,5 +83,5 @@ There are several UI elements to be aware of :
 
 The application use itself should be fairly self-explanatory!
 
-Feel free to open an issue or comment if you have a feature request or can optmize my code :-)
+Feel free to open an issue or comment if you have a feature request or can optimize my code :-)
 
