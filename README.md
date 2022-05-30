@@ -48,7 +48,7 @@ advantages that the Real Debrid service provides.
 Simply add the "Torrent Blackhole" option as a download client and fill out the following:
 
 
-![Settings](https://i.ibb.co/PZ4tStj/Sonnar-Settings.png)
+![SonnarSettings](https://user-images.githubusercontent.com/106483937/171043989-bcd89731-ab02-4ae9-90dc-59143e9cccb0.png)
 
 * Name -  **"Real Debrid Manager"**
 * Enable - **Yes**
@@ -71,7 +71,7 @@ This is where you can see the progress of all tasks sent to the application.
 
 There are several UI elements to be aware of :
 
-![WebUI](https://i.ibb.co/Gx7C8YK/webui.png)
+![WebUI](https://user-images.githubusercontent.com/106483937/171043994-4e158e2f-078c-42aa-89e2-47b343c47dd2.png)
 
 
 * Delete Completed - **Removes all downloads from list which have been sent to Aria2.**
