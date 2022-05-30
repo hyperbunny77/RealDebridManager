@@ -2,6 +2,8 @@
 
 Docker Repo : [https://hub.docker.com/r/hyperbunny77/realdebridmanager](https://hub.docker.com/r/hyperbunny77/realdebridmanager)
 
+###### Note : Default Login is "admin" + "admin". You are prompted to change this on first run.
+
 This project aims to automate many functions of the Real Debrid Service.
 It is intended to slot into your existing workflows. Please see examples below.
 
