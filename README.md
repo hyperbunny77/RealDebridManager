@@ -5,7 +5,11 @@ Docker Repo : [https://hub.docker.com/r/hyperbunny77/realdebridmanager](https://
 ###### Note : Default Login is "admin" + "admin". You are prompted to change this on first run.
 
 This project aims to automate many functions of the Real Debrid Service.
-It is intended to slot into your existing workflows. Please see examples below.
+It is intended to slot into your existing workflows.
+
+##### This project is an alternative to the great solution "rdt-client". It is lightweight and uses less rescources so is great for a small low powered NAS.
+
+Please see examples below.
 
 ### __**Core Functionality :**__
 
