@@ -28,8 +28,10 @@ Deploy the application via the use of docker. Please use the below docker compos
   realdebridmanager:
     image: hyperbunny77/realdebridmanager:2022.05.29   #Change to the latest release
     container_name: realdebridmanager
+    environment:
+      - rdmport=5000    # WebUI Port
     ports:
-      - 5000:5000/tcp 	
+      - 5000:5000/tcp 	#Change second value if changed above
     volumes:
       - torrent_folder_to_watch:/watch
       - path_for_config_storage:/config
