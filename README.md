@@ -9,7 +9,7 @@ It is intended to slot into your existing workflows.
 
 ##### This project is an alternative to the great solution "rdt-client". It is lightweight and uses less resources so is great for a small low powered NAS.
 
-Please see examples below.
+
 
 ### __**Core Functionality :**__
 
@@ -21,6 +21,9 @@ Please see examples below.
 * Move Torrent file to completed/errored Folders
 
 ## Core Setup :
+Before deploying the Real Debrid Manager docker container ensure you have a working aria2 client. Real Debrid Manager uses this for downloading of the retrieved files. 
+
+I recommend using [p3terx/aria2-pro](https://hub.docker.com/r/p3terx/aria2-pro).
 
 Deploy the application via the use of docker. Please use the below docker compose as a template :
 
