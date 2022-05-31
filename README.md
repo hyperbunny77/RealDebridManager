@@ -7,7 +7,7 @@ Docker Repo : [https://hub.docker.com/r/hyperbunny77/realdebridmanager](https://
 This project aims to automate many functions of the Real Debrid Service.
 It is intended to slot into your existing workflows.
 
-##### This project is an alternative to the great solution "rdt-client". It is lightweight and uses less rescources so is great for a small low powered NAS.
+##### This project is an alternative to the great solution "rdt-client". It is lightweight and uses less resources so is great for a small low powered NAS.
 
 Please see examples below.
 
