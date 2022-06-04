@@ -25,6 +25,26 @@
             </div>
          </nav>
       </div>
+   <div class="container-md">
+       <div class="mb-3">
+           </div>
+          <div class="alert alert-primary" role="alert">
+              <h5>Real Debrid Manager Updates:</h5>
+
+          {% for i in updates %}
+              <p>{{ i }} </p>
+          {% endfor %}
+
+          </div>
+            {% if hideversionotice==1 %}
+       <p></p>
+       {% else %}
+            <div class="alert alert-danger" role="alert">
+                <h5>{{updatenotice}}</h5>
+            </div>
+       {% endif %}
+
+    </div>
     <div class="container-md">
         <div class="mb-3">
             <a href="/deletecompleted" button type="button" class="btn btn-danger mx-2">Delete Completed</a></button>
@@ -62,6 +82,8 @@
          {% endfor %}
       </table>
       </div>
+       <p>Version:   {{version}}</p>
    </div>
+
    </body>
 </html>

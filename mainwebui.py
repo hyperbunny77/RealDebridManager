@@ -1,7 +1,11 @@
 import os
+import urllib
 
 from flask import Flask, render_template, request, redirect
 databaseinfo= "/config/main.db"
+global myversion
+
+
 import sqlite3 as sql
 connection = sql.connect(':memory:')
 connection.set_trace_callback(print)
@@ -35,6 +39,36 @@ basic_auth = BasicAuth(app)
 @app.route('/')
 @basic_auth.required
 def list():
+    myversion = float(1.0)
+    try:
+        url = "https://debrid-manager-updates.onrender.com/rdmupdate.txt"
+        updates=[]
+        for line in urllib.request.urlopen(url):
+            updates.append(line.decode('utf-8'))
+
+    except:
+        print("Failed To Fetch Changelog From Online")
+        updates.append("Failed to fetch updates online")
+
+
+    try:
+        url = "https://debrid-manager-updates.onrender.com/rdmversion.txt"
+        for line in urllib.request.urlopen(url):
+            latestversion=(line.decode('utf-8'))
+            latestversion=(float(latestversion))
+        if myversion == latestversion:
+            hideversion=1
+            updatenotice=""
+        else:
+            myversion=str(myversion)
+            latestversion=str(latestversion)
+            updatenotice=("You are running an outdated version of Real Debrid Manager (" + myversion + ") -   Please update to the latest version  ("+ latestversion+")")
+            hideversion=0
+    except:
+        print("Failed To Fetch version From Online")
+        updatenotice = ""
+        hideversion=1
+
     con = sql.connect(databaseinfo, timeout=20)
     con.row_factory = sql.Row
     cur = con.cursor()
@@ -79,7 +113,7 @@ def list():
 
             cur.execute("select  * from webuiview ORDER BY Timestamp DESC")
             rows = cur.fetchall();
-        return render_template("main.html", newlist=rows)
+        return render_template("main.html", newlist=rows, updates=updates, version=myversion, updatenotice=updatenotice, hideversionotice=hideversion)
 
 
 
