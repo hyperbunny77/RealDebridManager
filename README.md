@@ -29,7 +29,7 @@ Deploy the application via the use of docker. Please use the below docker compos
 
 ```
   realdebridmanager:
-    image: hyperbunny77/realdebridmanager:2022.05.29   #Change to the latest release
+    image: hyperbunny77/realdebridmanager:2022.06.04  #Change to the latest release
     container_name: realdebridmanager
     environment:
       - rdmport=5000    # WebUI Port
