@@ -27,6 +27,8 @@ I recommend using [p3terx/aria2-pro](https://hub.docker.com/r/p3terx/aria2-pro).
 
 Deploy the application via the use of docker. Please use the below docker compose as a template :
 
+###### Note : Remove comments from below example and replace paths with your paths.
+
 ```
   realdebridmanager:
     image: hyperbunny77/realdebridmanager:2022.06.04  #Change to the latest release
