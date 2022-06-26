@@ -2,7 +2,7 @@ import requests
 import time
 import os
 import aria2p
-databaseinfo= "/config/main.db"
+databaseinfo = os.getenv('dbinfo')
 
 import sqlite3
 connection = sqlite3.connect(databaseinfo, timeout=20)

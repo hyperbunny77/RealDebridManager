@@ -2,7 +2,8 @@ import os
 import urllib
 
 from flask import Flask, render_template, request, redirect
-databaseinfo= "/config/main.db"
+databaseinfo = os.getenv('dbinfo')
+pathtowatch = os.getenv('watchpath')
 global myversion
 
 
@@ -39,7 +40,7 @@ basic_auth = BasicAuth(app)
 @app.route('/')
 @basic_auth.required
 def list():
-    myversion = float(1.0)
+    myversion = float(1.1)
     try:
         url = "https://debrid-manager-updates.onrender.com/rdmupdate.txt"
         updates=[]
@@ -77,9 +78,9 @@ def list():
     result = cur.fetchall();
     result = (result[0][0])
     if result == 0:
-        path = "/watch/processed"
+        path = pathtowatch + "/processed"
         os.mkdir(path, mode=0o777);
-        path = "/watch/errored"
+        path = pathtowatch +"/errored"
         os.mkdir(path, mode=0o777);
         return render_template("firstlogin.html")
     else:

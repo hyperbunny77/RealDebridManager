@@ -1,8 +1,8 @@
 import pyinotify
 import os
 
-pathtowatch = "/watch"
-databaseinfo= "/config/main.db"
+databaseinfo = os.getenv('dbinfo')
+pathtowatch = os.getenv('watchpath')
 
 
 wm = pyinotify.WatchManager()  # Watch Manager
