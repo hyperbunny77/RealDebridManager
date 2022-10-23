@@ -15,7 +15,7 @@ cursor.execute("SELECT * FROM settings where id=1")
 result = cursor.fetchall()
 waitbetween = result[0][1]
 maxattempts = result[0][2]
-hostaria = result[0][3]
+aria2host = result[0][3]
 secretkey = result[0][4]
 rdapikey = result[0][5]
 
@@ -225,7 +225,7 @@ def realdebridtorrent(magnet):
             ),
         )
         connection.commit()
-        aria2 = aria2p.API(aria2p.Client(host=hostaria, port=6800, secret=secretkey))
+        aria2 = aria2p.API(aria2p.Client(host=aria2host, port=6800, secret=secretkey))
         error = 0
         links = responsefromrd["links"]
         for i in range(len(links)):
