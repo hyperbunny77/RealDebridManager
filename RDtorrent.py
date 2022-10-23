@@ -2,55 +2,74 @@ import requests
 import time
 import os
 import aria2p
-databaseinfo = os.getenv('dbinfo')
-
 import sqlite3
+
+databaseinfo = os.getenv("dbinfo")
 connection = sqlite3.connect(databaseinfo, timeout=20)
 cursor = connection.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS tasks (id TEXT, filename TEXT, rdstatus TEXT, rdprogressdownload INTEGER, attemptstogetlink INTEGER, rderror TEXT , completed TEXT , Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP )")
+cursor.execute(
+    "CREATE TABLE IF NOT EXISTS tasks (id TEXT, filename TEXT, rdstatus TEXT, rdprogressdownload INTEGER, attemptstogetlink INTEGER, rderror TEXT , completed TEXT , Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP )"
+)
 
 cursor.execute("SELECT * FROM settings where id=1")
-result = cursor.fetchall();
-waitbetween=(result[0][1])
-maxattempts=(result[0][2])
-hostaria=(result[0][3])
-secretkey=(result[0][4])
-rdapikey=(result[0][5])
+result = cursor.fetchall()
+waitbetween = result[0][1]
+maxattempts = result[0][2]
+hostaria = result[0][3]
+secretkey = result[0][4]
+rdapikey = result[0][5]
 
 
-def moveprocessed(pathname,error):
+def moveprocessed(pathname, error):
     head, tail = os.path.split(pathname)
-    if error == 0 :
-        newlocaton = (head + "/processed/" + tail)
+    if error == 0:
+        newlocaton = head + "/processed/" + tail
         os.rename(pathname, newlocaton)
     else:
-        newlocaton = (head + "/errored/" + tail)
+        newlocaton = head + "/errored/" + tail
         os.rename(pathname, newlocaton)
+
 
 def realdebridtorrent(torrent):
     global completed
-    addtorrenturl = ("https://api.real-debrid.com/rest/1.0/torrents/addTorrent?auth_token="+rdapikey)
-    with open(torrent, 'rb') as finput:
+    addtorrenturl = (
+        "https://api.real-debrid.com/rest/1.0/torrents/addTorrent?auth_token="
+        + rdapikey
+    )
+    with open(torrent, "rb") as finput:
         response = requests.put(addtorrenturl, data=finput.read())
-    responsefromrd = (response.json())
-    myid = responsefromrd['id']
+    responsefromrd = response.json()
+    myid = responsefromrd["id"]
     head, tail = os.path.split(torrent)
-    filename=tail
-    rdstatus="Submitted to RD"
-    attemptstogetlink=0
-    rderror=" "
-    completedtask="No"
-    cursor.execute('''INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?)''',(myid,filename,rdstatus,attemptstogetlink,rderror,completedtask))
+    filename = tail
+    rdstatus = "Submitted to RD"
+    attemptstogetlink = 0
+    rderror = " "
+    completedtask = "No"
+    cursor.execute(
+        """INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?)""",
+        (myid, filename, rdstatus, attemptstogetlink, rderror, completedtask),
+    )
     connection.commit()
     time.sleep(2)
-    selectfiles = ("https://api.real-debrid.com/rest/1.0/torrents/selectFiles/" + myid + "?auth_token=" + rdapikey)
+    selectfiles = (
+        "https://api.real-debrid.com/rest/1.0/torrents/selectFiles/"
+        + myid
+        + "?auth_token="
+        + rdapikey
+    )
     allfiles = {"files": "all"}
     response = requests.post(selectfiles, data=allfiles)
 
-    selecttorrentinfo = ("https://api.real-debrid.com/rest/1.0/torrents/info/" + myid + "?auth_token=" + rdapikey)
+    selecttorrentinfo = (
+        "https://api.real-debrid.com/rest/1.0/torrents/info/"
+        + myid
+        + "?auth_token="
+        + rdapikey
+    )
     response = requests.get(selecttorrentinfo)
-    responsefromrd = (response.json())
-    status=(responsefromrd["status"])
+    responsefromrd = response.json()
+    status = responsefromrd["status"]
 
     match status:
         case "downloaded":
@@ -60,125 +79,217 @@ def realdebridtorrent(torrent):
         case "magnet_error":
             rdstatus = "Magnet Error"
             cursor.execute(
-                    '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-                    (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+                """INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)""",
+                (
+                    myid,
+                    filename,
+                    rdstatus,
+                    rdprogressdownload,
+                    attemptstogetlink,
+                    rderror,
+                    completedtask,
+                ),
+            )
             connection.commit()
             completed = 1
             global error
             error = 1
-            moveprocessed(torrent,error)
+            moveprocessed(torrent, error)
         case "error":
             rdstatus = "General Error"
             cursor.execute(
-                    '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-                    (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+                """INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)""",
+                (
+                    myid,
+                    filename,
+                    rdstatus,
+                    rdprogressdownload,
+                    attemptstogetlink,
+                    rderror,
+                    completedtask,
+                ),
+            )
             connection.commit()
             completed = 1
-            error=1
-            moveprocessed(torrent,error)
+            error = 1
+            moveprocessed(torrent, error)
         case "magnet_conversion":
             rdstatus = "Stuck Magnet Conversion"
             cursor.execute(
-                    '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-                    (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+                """INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)""",
+                (
+                    myid,
+                    filename,
+                    rdstatus,
+                    rdprogressdownload,
+                    attemptstogetlink,
+                    rderror,
+                    completedtask,
+                ),
+            )
             connection.commit()
             completed = 1
-            error=1
-            moveprocessed(torrent,error)
+            error = 1
+            moveprocessed(torrent, error)
         case "virus":
             rdstatus = "File is Virus"
             cursor.execute(
-                    '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-                    (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+                """INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)""",
+                (
+                    myid,
+                    filename,
+                    rdstatus,
+                    rdprogressdownload,
+                    attemptstogetlink,
+                    rderror,
+                    completedtask,
+                ),
+            )
             connection.commit()
             completed = 1
-            error=1
-            moveprocessed(torrent,error)
+            error = 1
+            moveprocessed(torrent, error)
         case "dead":
             rdstatus = "Link is Dead"
             cursor.execute(
-                    '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-                    (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+                """INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)""",
+                (
+                    myid,
+                    filename,
+                    rdstatus,
+                    rdprogressdownload,
+                    attemptstogetlink,
+                    rderror,
+                    completedtask,
+                ),
+            )
             connection.commit()
             completed = 1
-            error=1
-            moveprocessed(torrent,error)
+            error = 1
+            moveprocessed(torrent, error)
         case _:
             completed = 0
 
     while completed == 0:
-        selecttorrentinfo = ("https://api.real-debrid.com/rest/1.0/torrents/info/" + myid + "?auth_token=" +rdapikey)
+        selecttorrentinfo = (
+            "https://api.real-debrid.com/rest/1.0/torrents/info/"
+            + myid
+            + "?auth_token="
+            + rdapikey
+        )
         response = requests.get(selecttorrentinfo)
-        responsefromrd = (response.json())
-        if responsefromrd['status'] == "downloaded":
+        responsefromrd = response.json()
+        if responsefromrd["status"] == "downloaded":
             completed = 1
         else:
             completed = 0
-        rdstatus="Downloading"
-        attemptstogetlink=attemptstogetlink+1
-        rdprogressdownload=responsefromrd['progress']
-        completedtask="No"
-        rderror="No error"
+        rdstatus = "Downloading"
+        attemptstogetlink = attemptstogetlink + 1
+        rdprogressdownload = responsefromrd["progress"]
+        completedtask = "No"
+        rderror = "No error"
         cursor.execute(
-                '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-                (myid, filename, rdstatus, rdprogressdownload,attemptstogetlink, rderror, completedtask))
+            """INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)""",
+            (
+                myid,
+                filename,
+                rdstatus,
+                rdprogressdownload,
+                attemptstogetlink,
+                rderror,
+                completedtask,
+            ),
+        )
         connection.commit()
         if attemptstogetlink >= maxattempts:
-            completed=2
+            completed = 2
         else:
             time.sleep(waitbetween)
 
-
-    if completed==1:
-        rdstatus="Downloaded to RD"
-        attemptstogetlink=attemptstogetlink
+    if completed == 1:
+        rdstatus = "Downloaded to RD"
+        attemptstogetlink = attemptstogetlink
         rderror = "none"
-        completedtask="Yes"
-        rdprogressdownload=100
+        completedtask = "Yes"
+        rdprogressdownload = 100
         cursor.execute(
-                '''INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload,completed) VALUES (?,?,?,?,?,?,?)''',
-                (myid, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload, completedtask))
+            """INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload,completed) VALUES (?,?,?,?,?,?,?)""",
+            (
+                myid,
+                filename,
+                rdstatus,
+                attemptstogetlink,
+                rderror,
+                rdprogressdownload,
+                completedtask,
+            ),
+        )
         connection.commit()
-        aria2 = aria2p.API(aria2p.Client(host=hostaria,port=6800,secret=secretkey))
+        aria2 = aria2p.API(aria2p.Client(host=hostaria, port=6800, secret=secretkey))
         error = 0
-        links = (responsefromrd['links'])
+        links = responsefromrd["links"]
         for i in range(len(links)):
-            getdownloadlinkurl = ("https://api.real-debrid.com/rest/1.0/unrestrict/link?auth_token="+rdapikey)
+            getdownloadlinkurl = (
+                "https://api.real-debrid.com/rest/1.0/unrestrict/link?auth_token="
+                + rdapikey
+            )
             filetoselect = {"link": links[i]}
             response = requests.post(getdownloadlinkurl, data=filetoselect)
-            responsefromrd = (response.json())
-            mylink = responsefromrd['download']
+            responsefromrd = response.json()
+            mylink = responsefromrd["download"]
             try:
                 download = aria2.add(mylink)
             except:
                 print("Error Connecting To Your ARIA2 Instance")
         moveprocessed(torrent, error)
         time.sleep(1)
-        rdstatus="Sent to aria2"
+        rdstatus = "Sent to aria2"
         cursor.execute(
-                '''INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload,completed) VALUES (?,?,?,?,?,?,?)''',
-                (myid, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload, completedtask))
+            """INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload,completed) VALUES (?,?,?,?,?,?,?)""",
+            (
+                myid,
+                filename,
+                rdstatus,
+                attemptstogetlink,
+                rderror,
+                rdprogressdownload,
+                completedtask,
+            ),
+        )
         connection.commit()
 
     elif completed == 2:
         time.sleep(1)
-        deletetorrentfromrd = ("https://api.real-debrid.com/rest/1.0/torrents/delete/" + myid + "?auth_token="+rdapikey)
+        deletetorrentfromrd = (
+            "https://api.real-debrid.com/rest/1.0/torrents/delete/"
+            + myid
+            + "?auth_token="
+            + rdapikey
+        )
         response = requests.delete(deletetorrentfromrd)
-        error=1
-        rdstatus="Max Timeout Reached"
-        attemptstogetlink=attemptstogetlink
-        rderror="Max Time"
-        completedtask="No"
+        error = 1
+        rdstatus = "Max Timeout Reached"
+        attemptstogetlink = attemptstogetlink
+        rderror = "Max Time"
+        completedtask = "No"
         cursor.execute(
-                '''INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload,completed) VALUES (?,?,?,?,?,?,?)''',
-                (myid, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload, completedtask))
+            """INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload,completed) VALUES (?,?,?,?,?,?,?)""",
+            (
+                myid,
+                filename,
+                rdstatus,
+                attemptstogetlink,
+                rderror,
+                rdprogressdownload,
+                completedtask,
+            ),
+        )
         connection.commit()
         moveprocessed(torrent, error)
 
 
-
-
 import sys
-torrent=sys.argv[1]
+
+torrent = sys.argv[1]
 print("Starting Worker on Received Torrent")
 realdebridtorrent(torrent)
