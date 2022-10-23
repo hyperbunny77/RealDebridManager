@@ -29,14 +29,14 @@ class EventHandler(pyinotify.ProcessEvent):
                 torrent = event.pathname
                 import subprocess
 
-                process = subprocess.Popen(["python", "RDtorrent.py", torrent])
+                process = subprocess.Popen(["python", "torrent.py", torrent])
 
             case "magnet":
                 print("Magnet file detected ", tail)
                 magnetlink = event.pathname
                 import subprocess
 
-                process = subprocess.Popen(["python", "RDmagnet.py", magnetlink])
+                process = subprocess.Popen(["python", "magnet.py", magnetlink])
 
             case _:
                 print("IGNORE Not suitable - ", tail)
