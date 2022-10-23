@@ -54,58 +54,59 @@ def realdebridtorrent(magnet):
     responsefromrd = (response.json())
     status=(responsefromrd["status"])
 
-    if status == "downloaded":
-        completed = 1
-    elif status == "queued":
-        completed =0
-    elif status == "magnet_error":
-        rdstatus = "Magnet Error"
-        cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
-        connection.commit()
-        completed = 1
-        global error
-        error=1
-        moveprocessed(magnet,error)
-    elif status == "error":
-        rdstatus = "General Error"
-        cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
-        connection.commit()
-        completed = 1
-        error=1
-        moveprocessed(magnet,error)
-    elif status == "magnet_conversion":
-        rdstatus = "Stuck Magnet Conversion"
-        cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
-        connection.commit()
-        completed = 1
-        error=1
-        moveprocessed(magnet,error)
-    elif status == "virus":
-        rdstatus = "File is Virus"
-        cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
-        connection.commit()
-        completed = 1
-        error=1
-        moveprocessed(magnet,error)
-    elif status == "dead":
-        rdstatus = "Link is Dead"
-        cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
-        connection.commit()
-        completed = 1
-        error=1
-        moveprocessed(magnet,error)
-    else:
-        completed = 0
+    match status:
+        case "downloaded":
+            completed = 1
+        case "queued":
+            completed =0
+        case "magnet_error":
+            rdstatus = "Magnet Error"
+            cursor.execute(
+                '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
+                (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+            connection.commit()
+            completed = 1
+            global error
+            error=1
+            moveprocessed(magnet,error)
+        case "error":
+            rdstatus = "General Error"
+            cursor.execute(
+                '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
+                (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+            connection.commit()
+            completed = 1
+            error=1
+            moveprocessed(magnet,error)
+        case "magnet_conversion":
+            rdstatus = "Stuck Magnet Conversion"
+            cursor.execute(
+                '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
+                (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+            connection.commit()
+            completed = 1
+            error=1
+            moveprocessed(magnet,error)
+        case "virus":
+            rdstatus = "File is Virus"
+            cursor.execute(
+                '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
+                (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+            connection.commit()
+            completed = 1
+            error=1
+            moveprocessed(magnet,error)
+        case "dead":
+            rdstatus = "Link is Dead"
+            cursor.execute(
+                '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
+                (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+            connection.commit()
+            completed = 1
+            error=1
+            moveprocessed(magnet,error)
+        case _:
+            completed = 0
 
     while completed == 0:
         selecttorrentinfo = ("https://api.real-debrid.com/rest/1.0/torrents/info/" + myid + "?auth_token=" +rdapikey)
@@ -175,8 +176,6 @@ def realdebridtorrent(magnet):
             (myid, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload, completedtask))
         connection.commit()
         moveprocessed(magnet, error)
-
-
 
 
 import sys

@@ -52,58 +52,59 @@ def realdebridtorrent(torrent):
     responsefromrd = (response.json())
     status=(responsefromrd["status"])
 
-    if status == "downloaded":
-        completed = 1
-    elif status == "queued":
-        completed =0
-    elif status == "magnet_error":
-        rdstatus = "Magnet Error"
-        cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
-        connection.commit()
-        completed = 1
-        global error
-        error=1
-        moveprocessed(torrent,error)
-    elif status == "error":
-        rdstatus = "General Error"
-        cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
-        connection.commit()
-        completed = 1
-        error=1
-        moveprocessed(torrent,error)
-    elif status == "magnet_conversion":
-        rdstatus = "Stuck Magnet Conversion"
-        cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
-        connection.commit()
-        completed = 1
-        error=1
-        moveprocessed(torrent,error)
-    elif status == "virus":
-        rdstatus = "File is Virus"
-        cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
-        connection.commit()
-        completed = 1
-        error=1
-        moveprocessed(torrent,error)
-    elif status == "dead":
-        rdstatus = "Link is Dead"
-        cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
-        connection.commit()
-        completed = 1
-        error=1
-        moveprocessed(torrent,error)
-    else:
-        completed = 0
+    match status:
+        case "downloaded":
+            completed = 1
+        case "queued":
+            completed = 0
+        case "magnet_error":
+            rdstatus = "Magnet Error"
+            cursor.execute(
+                    '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
+                    (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+            connection.commit()
+            completed = 1
+            global error
+            error = 1
+            moveprocessed(torrent,error)
+        case "error":
+            rdstatus = "General Error"
+            cursor.execute(
+                    '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
+                    (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+            connection.commit()
+            completed = 1
+            error=1
+            moveprocessed(torrent,error)
+        case "magnet_conversion":
+            rdstatus = "Stuck Magnet Conversion"
+            cursor.execute(
+                    '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
+                    (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+            connection.commit()
+            completed = 1
+            error=1
+            moveprocessed(torrent,error)
+        case "virus":
+            rdstatus = "File is Virus"
+            cursor.execute(
+                    '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
+                    (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+            connection.commit()
+            completed = 1
+            error=1
+            moveprocessed(torrent,error)
+        case "dead":
+            rdstatus = "Link is Dead"
+            cursor.execute(
+                    '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
+                    (myid, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror, completedtask))
+            connection.commit()
+            completed = 1
+            error=1
+            moveprocessed(torrent,error)
+        case _:
+            completed = 0
 
     while completed == 0:
         selecttorrentinfo = ("https://api.real-debrid.com/rest/1.0/torrents/info/" + myid + "?auth_token=" +rdapikey)
@@ -119,8 +120,8 @@ def realdebridtorrent(torrent):
         completedtask="No"
         rderror="No error"
         cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, rdprogressdownload,attemptstogetlink, rderror, completedtask))
+                '''INSERT INTO tasks(id, filename, rdstatus, rdprogressdownload, attemptstogetlink, rderror,completed) VALUES (?,?,?,?,?,?,?)''',
+                (myid, filename, rdstatus, rdprogressdownload,attemptstogetlink, rderror, completedtask))
         connection.commit()
         if attemptstogetlink >= maxattempts:
             completed=2
@@ -135,8 +136,8 @@ def realdebridtorrent(torrent):
         completedtask="Yes"
         rdprogressdownload=100
         cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload, completedtask))
+                '''INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload,completed) VALUES (?,?,?,?,?,?,?)''',
+                (myid, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload, completedtask))
         connection.commit()
         aria2 = aria2p.API(aria2p.Client(host=hostaria,port=6800,secret=secretkey))
         error = 0
@@ -155,8 +156,8 @@ def realdebridtorrent(torrent):
         time.sleep(1)
         rdstatus="Sent to aria2"
         cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload, completedtask))
+                '''INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload,completed) VALUES (?,?,?,?,?,?,?)''',
+                (myid, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload, completedtask))
         connection.commit()
 
     elif completed == 2:
@@ -169,8 +170,8 @@ def realdebridtorrent(torrent):
         rderror="Max Time"
         completedtask="No"
         cursor.execute(
-            '''INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload,completed) VALUES (?,?,?,?,?,?,?)''',
-            (myid, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload, completedtask))
+                '''INSERT INTO tasks(id, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload,completed) VALUES (?,?,?,?,?,?,?)''',
+                (myid, filename, rdstatus, attemptstogetlink, rderror,rdprogressdownload, completedtask))
         connection.commit()
         moveprocessed(torrent, error)
 
