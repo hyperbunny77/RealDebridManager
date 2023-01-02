@@ -9,7 +9,7 @@ Flask==2.1.2
 Flask-BasicAuth==0.2.0
 gunicorn==20.1.0
 idna==3.3
-importlib-metadata==4.11.4
+importlib-metadata==6.0.0
 itsdangerous==2.1.2
 Jinja2==3.1.2
 loguru==0.6.0
